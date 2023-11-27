@@ -13,7 +13,10 @@
     "@dqbd/tiktoken": "^1.0.7",
     "dotenv": "^16.0.3",
     "hnswlib-node": "^1.4.2",
-    "langchain": "^0.0.67"
+    "langchain": "^0.0.197-rc.1",
+    "mysql": "^2.18.1",
+    "sqlite3": "^5.1.6",
+    "typeorm": "^0.3.17"
   },
   "type": "module"
 }
