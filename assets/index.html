@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Esperanza</title>
+</head>
+<body>
+    <form id="queryForm">
+        <label for="queryInput">Enter your query:</label>
+        <input type="text" id="queryInput" name="queryInput">
+        <button type="submit">Submit</button>
+        <div class="output" id="output">
+
+        </div>
+    </form>
+
+    <div id="outputArea"></div>
+
+    <script>
+        document.getElementById('queryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const input = document.getElementById('queryInput').value;
+            const output = document.getElementById('output');
+            console.log(input);
+            fetch('/submit-query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify({ query: input })
+                body: JSON.stringify({myinput: input})
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Handle the response from the server if needed
+                console.log(data);
+                output.text = data;
+            })
+            .catch(error => {
+                // Handle any errors
+                output.text = error;
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
