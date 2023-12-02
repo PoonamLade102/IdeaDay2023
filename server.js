@@ -17,16 +17,12 @@ app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json()); // Parse JSON bodies
 app.post('/submit-query', (req, res) => {
   const query = req.body.myinput;
-  console.log(req.body.myinput);
-  console.log(typeof query);
   // Process the query data and perform operations here
   if(query.length != 0){
     const ProcessedData = run(query);
     ProcessedData.then((data)=> {
-      console.log(data)
       res.send(data);
     })
-    
   }else{
     res.send("please enter some question to ask")
   }

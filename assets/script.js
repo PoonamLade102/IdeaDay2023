@@ -4,93 +4,40 @@ import { createSqlAgent, SqlToolkit } from "langchain/agents/toolkits/sql";
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 import fs from "fs";
-import mysql from "mysql";
+import mysql from "mysql2";
 
 dotenv.config();
 
-// const createDataSource = async () => {
-//     return new DataSource({
-//         type: "sqlite",
-//         database: "database/Chinook_MySql"
-//     });
-// };
-
-// const initializeDatabase = async (dataSource) => {
-//     const db = await SqlDatabase.fromDataSourceParams({
-//         appDataSource: dataSource,
-//     });
-//     return db;
-// };
-
-// const createOpenAIModel = () => {
-//     return new OpenAI({
-//         openAIApiKey: process.env.OPENAI_API_KEY,
-//         temperature: 0
-//     });
-// };
-
-
-// const executeQuery = async (executor, input) => {
-//     console.log('Input->', { input });
-//     const result = await executor.call({ input });
-//     console.log('Result ->', { result });
-//     console.log(`Intermediate Steps: ${JSON.stringify(result.intermediateSteps, null, 2)}`);
-//     return result;
-// };
-
-// const destroyDataSource = async (dataSource) => {
-//     await dataSource.destroy();
-// };
-
-// const run = async (input) => {
-//     const dataSource = createDataSource();
-//     const db = await initializeDatabase(dataSource);
-    
-//     const model = createOpenAIModel();
-//     const toolkit = new SqlToolkit(db,model);
-//     const executor = createSqlAgent(model, toolkit);
-
-//     const result = await executeQuery(executor, input);
-
-//     await destroyDataSource(dataSource);
-
-//     return result;
-// };
-
-// run();
-
 const run = async (input) => {
-    const dbconfig = {
-        type: 'mysql',
-        user: 'sa',
-        password: '~$ystem32',
-        server: 'localhost',
-        database: 'pets',
-      };
-
-      
-    var connection = mysql.createConnection({
-    host     : 'GWT5LL3-L',
+    const connection = mysql.createConnection({
+    host     : 'localhost',
     user     : 'sa',
     password : '~$ystem32',
-    database : 'pets'
+    database : 'chinook'
     });
 
-    connection.connect();
+    connection.connect((error) => {
+        if (error) {
+          console.error('Error connecting to MySQL database:', error);
+        } else {
+          console.log('Connected to MySQL database!');
+        }
+      });
 
-    connection.query('SELECT * from cats', function (error, results, fields) {
-    if (error) throw error;
-    console.log('The solution is: ', results[0].solution);
-    });
+    // connection.query('SELECT * from cats', function (error, results) {
+    // if (error) throw error;
+    // console.log('The solution is: ', results);
+    // });
 
-    // const db = await SqlDatabase.fromDataSourceParams({
-    //       appDataSource: connection,
-    //   });
+    //  const db = await SqlDatabase.fromDataSourceParams({
+    //        appDataSource: connection,
+    //    });
     const toolkit = new SqlToolkit(connection);
     const model = new OpenAI({
         openAIApiKey: process.env.OPENAI_API_KEY,
         temperature: 0
     });
+
 
     const executor = createSqlAgent(model, toolkit);
 
@@ -111,7 +58,8 @@ const run = async (input) => {
         2
     )}`);
 
-    //await datasource.destroy();
+    
+    await connection.end();
 
     return result.output;
 };
