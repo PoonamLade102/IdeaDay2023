@@ -4,7 +4,6 @@ import { createSqlAgent, SqlToolkit } from "langchain/agents/toolkits/sql";
 import { DataSource } from "typeorm";
 
 import dotenv from "dotenv";
-import fs from "fs";
 dotenv.config();
 
 const run = async () => {
@@ -23,11 +22,22 @@ const run = async () => {
 
     const executor = createSqlAgent(model, toolkit);
 
-    const input = 'List all Album.';
+    const input = 'RENAME all Employee';
+
+    let result;
+
+    const lowercaseInput = input.toLowerCase();
+
+    if (lowercaseInput.includes('change') || lowercaseInput.includes('rename') 
+    || lowercaseInput.includes('insert') || lowercaseInput.includes('update') 
+    || lowercaseInput.includes('delete') || lowercaseInput.includes('drop')) {
+        result = 'DML Operations are not supported';
+    }
+    else {
+        result = await executor.call({ input });
+    }
 
     console.log('Input->', {input});
-
-    const result = await executor.call({ input });
 
     console.log('Result ->', {result});
 
