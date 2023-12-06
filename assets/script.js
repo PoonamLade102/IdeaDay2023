@@ -64,7 +64,8 @@ const run = async (res, input) => {
       error : true,
       message : "Sorry you cannot modify the database.😡"
     };
-    res.send(Result)
+    res.send(Result);
+    return;
   }
   //Schema Generator
   const database = new Database();
