@@ -18,7 +18,7 @@ app.use(express.json()); // Parse JSON bodies
 app.post('/submit-query', (req, res) => {
   const query = req.body.myinput;
   // Process the query data and perform operations here
-  if(query.length != 0){
+  if(query.length != 0 || query!=""){
     const ProcessedData = run(res, query);
   }else{
     res.send("please enter some question to ask")

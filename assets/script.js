@@ -36,9 +36,36 @@ class Database {
   }
 }
 
+function inputValidator(input) {
+  console.log('Modify');
+ 
+  const lowercaseInput = input.toLowerCase();
+ 
+    if (lowercaseInput.includes('change') || lowercaseInput.includes('rename') 
+    || lowercaseInput.includes('insert') || lowercaseInput.includes('update') 
+    || lowercaseInput.includes('delete') || lowercaseInput.includes('drop')
+    || lowercaseInput.includes('modify') || lowercaseInput.includes('adjust')
+    || lowercaseInput.includes('add') || lowercaseInput.includes('inject')
+    || lowercaseInput.includes('remove') || lowercaseInput.includes('discard')) {
+        return false;
+    }
+ 
+  return true;
+}
+
+
 const run = async (res, input) => {
   let explanationString, query_string , query_output;
   
+  if(!inputValidator(input)){
+    let Result = {
+      query_string,
+      query_output,
+      error : true,
+      message : "Sorry you cannot modify the database.😡"
+    };
+    res.send(Result)
+  }
   //Schema Generator
   const database = new Database();
 
@@ -115,7 +142,9 @@ GROUP BY
         schema: explanationString,
         question: input,
       });
-
+      if(query_string == undefined){
+        throw new Error("Cannot Genrate Data for this query.")
+      }
       //run query
 
       return database.query(query_string);
@@ -128,9 +157,19 @@ GROUP BY
       let Result = {
         query_string,
         query_output,
+        error : false,
+        message : "",
       };
       res.send(Result)
-    });
+    }).catch( err => {
+      let Result = {
+        query_string,
+        query_output,
+        error : true,
+        message : err
+      };
+      res.send(Result)
+  } );
   return;
 };
 export default run;

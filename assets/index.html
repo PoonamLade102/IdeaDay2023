@@ -140,40 +140,58 @@ tbody tr:hover {
                 .then(response => response.json())
                 .then(data => {
                     // Handle the response from the server if needed
-                    console.log(data);
-                    outputquery.innerHTML = data.query_string;
-                    outputresult.innerHTML = ' ';
-                    const result = data.query_output;
-                    const tableDiv = document.getElementById('outputResult');
 
-                    // Create a table element
-                    const table = document.createElement('table');
+                    if(data.error == true){
+                        outputquery.innerHTML = data.message;
+                        outputresult.innerHTML =  data.message;
+                    }
+                    else if (data.query_string == undefined ) {
+                        outputquery.innerHTML = "cannot Generate query for this input or you may not have data related to it";
+                        outputresult.innerHTML =  "cannot Generate query for this input or you may not have data related to it";
+                    } else {
+                        outputquery.innerHTML = data.query_string;
+                        outputresult.innerHTML = ' ';
+                        
+                        if (Object.keys(data.query_output).length === 0) {
+                            const tableDiv = document.getElementById('outputResult');
+                            tableDiv.innerHTML = "Cannot genrate data for this query"
+                        } else {
 
-                    // Create table header
-                    const headers = Object.keys(result[0]);
-                    const headerRow = document.createElement('tr');
-                    headers.forEach(headerText => {
-                        const header = document.createElement('th');
-                        header.appendChild(document.createTextNode(headerText));
-                        headerRow.appendChild(header);
-                    });
-                    table.appendChild(headerRow);
+                            const result = data.query_output;
+                        const tableDiv = document.getElementById('outputResult');
 
-                    // Create table rows with data
-                    result.forEach(obj => {
-                        const row = document.createElement('tr');
-                        headers.forEach(header => {
-                            const cell = document.createElement('td');
-                            cell.appendChild(document.createTextNode(obj[header]));
-                            row.appendChild(cell);
+                        // Create a table element
+                        const table = document.createElement('table');
+
+                        // Create table header
+                        const headers = Object.keys(result[0]);
+                        const headerRow = document.createElement('tr');
+                        headers.forEach(headerText => {
+                            const header = document.createElement('th');
+                            header.appendChild(document.createTextNode(headerText));
+                            headerRow.appendChild(header);
                         });
-                        table.appendChild(row);
-                    });
+                        table.appendChild(headerRow);
 
-                    // Append the table to the specified div
-                    tableDiv.appendChild(table);
+                        // Create table rows with data
+                        result.forEach(obj => {
+                            const row = document.createElement('tr');
+                            headers.forEach(header => {
+                                const cell = document.createElement('td');
+                                cell.appendChild(document.createTextNode(obj[header]));
+                                row.appendChild(cell);
+                            });
+                            table.appendChild(row);
+                        });
+
+                        // Append the table to the specified div
+                        tableDiv.appendChild(table);
+                        }
+                    }
+
                 });
         });
-    </script>
-</body>
-</html>
+                </script>
+    </body>
+    
+    </html>
