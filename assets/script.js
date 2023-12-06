@@ -1,5 +1,3 @@
-import { DataSource } from "typeorm";
-import { SqlDatabase } from "langchain/sql_db";
 import { PromptTemplate } from "langchain/prompts";
 import { RunnableSequence } from "langchain/schema/runnable";
 import { ChatOpenAI } from "langchain/chat_models/openai";
@@ -37,39 +35,51 @@ class Database {
 }
 
 function inputValidator(input) {
-  console.log('Modify');
- 
+  console.log("Modify");
+
   const lowercaseInput = input.toLowerCase();
- 
-    if (lowercaseInput.includes('change') || lowercaseInput.includes('rename') 
-    || lowercaseInput.includes('insert') || lowercaseInput.includes('update') 
-    || lowercaseInput.includes('delete') || lowercaseInput.includes('drop')
-    || lowercaseInput.includes('modify') || lowercaseInput.includes('adjust')
-    || lowercaseInput.includes('add') || lowercaseInput.includes('inject')
-    || lowercaseInput.includes('remove') || lowercaseInput.includes('discard')) {
-        return false;
-    }
- 
+
+  if (
+    lowercaseInput.includes("change") ||
+    lowercaseInput.includes("rename") ||
+    lowercaseInput.includes("insert") ||
+    lowercaseInput.includes("update") ||
+    lowercaseInput.includes("delete") ||
+    lowercaseInput.includes("drop") ||
+    lowercaseInput.includes("modify") ||
+    lowercaseInput.includes("adjust") ||
+    lowercaseInput.includes("add") ||
+    lowercaseInput.includes("inject") ||
+    lowercaseInput.includes("remove") ||
+    lowercaseInput.includes("discard")
+  ) {
+    return false;
+  }
+
   return true;
 }
 
-
 const run = async (res, input) => {
-  let explanationString, query_string , query_output;
-  
-  if(!inputValidator(input)){
-    let Result = {
-      query_string,
-      query_output,
-      error : true,
-      message : "Sorry you cannot modify the database.😡"
-    };
+  let explanationString, query_string, query_output;
+
+  let Result = {
+    query_string,
+    query_output,
+    error: false,
+    message: "",
+  };
+  //#region Input Validator
+  if (!inputValidator(input)) {
+    Result.error = true;
+    Result.message = "Sorry you cannot modify the database.😡";
     res.send(Result);
     return;
   }
-  //Schema Generator
-  const database = new Database();
+  //#endregion
 
+  //#region SchemaGenerator
+
+  const database = new Database();
   database
     .query(
       `
@@ -116,12 +126,16 @@ GROUP BY
 
         explanationString += "\n";
       });
+      //#endregion
 
-      //Query Generator
+      //#region QueryGenerator
+
+      //Defining AI model
       const llm = new ChatOpenAI();
 
+      //Defining Custom prompt
       const prompt =
-        PromptTemplate.fromTemplate(`Based on the provided SQL table schema below, write a SQL query that would answer the user's question.Just take the table name as a signular
+        PromptTemplate.fromTemplate(`Based on the provided SQL table schema below, write a SQL query that would answer the user's question.
   ------------
   SCHEMA: {schema}
   ------------
@@ -129,6 +143,7 @@ GROUP BY
   ------------
   SQL QUERY:`);
 
+      //Genrating a Langchain query chain based on the inputs
       const sqlQueryChain = RunnableSequence.from([
         {
           schema: (input) => input.schema,
@@ -143,34 +158,34 @@ GROUP BY
         schema: explanationString,
         question: input,
       });
-      if(query_string == undefined){
-        throw new Error("Cannot Genrate Data for this query.")
+      if (query_string == undefined) {
+        throw new Error("Cannot Generate Data for this query.");
       }
-      //run query
 
+      //#endregion
+
+      //#region Query Executor
       return database.query(query_string);
+      //#endregion
     })
-    .then((rows)=>{
+    .then((rows) => {
+      //Closing the database connection
       query_output = rows;
       return database.close();
     })
     .then(() => {
-      let Result = {
-        query_string,
-        query_output,
-        error : false,
-        message : "",
-      };
-      res.send(Result)
-    }).catch( err => {
-      let Result = {
-        query_string,
-        query_output,
-        error : true,
-        message : err
-      };
-      res.send(Result)
-  } );
+
+      Result.query_string = query_string;
+      Result.query_output = query_output;
+      Result.error = false;
+
+      res.send(Result);
+    })
+    .catch((err) => {
+      Result.error = true;
+      Result.message = err;
+      res.send(Result);
+    });
   return;
 };
 export default run;
