@@ -6,107 +6,102 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <style>
-    /* Apply styles to the form */
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f5f5f5;
-        /* Light grey background */
-    }
+/* Resetting default margin and padding for the body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1f1f1f; /* Darker background */
+  color: #cfcfcf; /* Light text */
+  width: 80%; /* Set the width of the page */
+  margin: 0 auto; /* Center align the content */
+}
 
-    #container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+h1{
+    color: rgb(201, 201, 201);
+}
+/* Form styles */
+form {
+  margin-bottom: 20px;
+}
 
-    #inputGroup{
-        display: flex;
-    }
-    .inputSearch{
-        flex-grow: 1;
-    }
+.input-group {
+  margin-bottom: 10px;
+}
 
-    #inputForm {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        max-width: 80vw;
-        width: 100%;
-        margin-bottom: 20px;
-    }
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
 
-    /* Style the input and button inside the form */
-    #queryInput {
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 16px;
-    }
+input[type="text"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  font-size: 1em;
+  border: none;
+  background-color: #282828;
+  color: #e2e2e2;
+  border-radius: 5px;
+  border: 1px solid #474a4d; /* Increased contrast */
+}
 
-    #inputForm label {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
+button {
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #4caf50;
+  color: rgb(255, 255, 255);
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
 
-    #inputForm button {
-        padding: 10px 15px;
-        border: none;
-        border-radius: 4px;
-        background-color: #4caf50;
-        /* Green color */
-        color: white;
-        cursor: pointer;
-        font-size: 16px;
-    }
+button:hover {
+  background-color: #388e3c;
+}
 
-    .outputArea {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        max-width: 80vw;
-        width: 100%;
-        overflow: auto;
-    }
+/* Output area styles */
+.outputArea {
+  background-color: #282828;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #474a4d; /* Increased contrast */
+}
 
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-bottom: 20px;
-    }
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border-radius: 5px;
+}
 
-    th,
-    td {
-        border: 1px solid #f5f5f5;
-        padding: 8px;
-        text-align: left;
-    }
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #474a4d; /* Darker border for cells */
+}
 
-    th {
-        background-color: #4caf50;
-        color: white;
-    }
+th {
+  background-color: #4caf50;
+  color: white;
+}
 
-    /* Zebra striping for rows */
-    tr:nth-child(even) {
-        background-color: #f5f5f5;
-    }
+/* Zebra striping for rows */
+tbody tr:nth-child(even) {
+  background-color: #33363A; /* Darker background for even rows */
+}
 
-    tr:hover {
-        background-color: #4caf50;
-        color: white;
-    }
+tbody tr:hover {
+  background-color: #474a4d; /* Hover color for rows */
+}
+
 </style>
 
 <body>
     <div id="container">
+        <h1>Data Retrieval Made fast 🐇</h1>
         <form id="inputForm">
             <div class="input-group">
                 <label for="queryInput">Enter your Question:</label>
