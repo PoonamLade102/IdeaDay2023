@@ -1,112 +1,183 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Project Esperanza</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <style>
-/* Apply styles to the form */
-body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', sans-serif;
-      background-color: #f5f5f5; /* Light grey background */
+    /* Apply styles to the form */
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f5f5f5;
+        /* Light grey background */
     }
 
     #container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #inputGroup{
+        display: flex;
+    }
+    .inputSearch{
+        flex-grow: 1;
     }
 
     #inputForm {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      max-width: 400px;
-      width: 100%;
-      margin-bottom: 20px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        max-width: 80vw;
+        width: 100%;
+        margin-bottom: 20px;
     }
 
     /* Style the input and button inside the form */
     #queryInput {
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
     }
 
     #inputForm label {
-      font-weight: bold;
-      margin-bottom: 5px;
+        font-weight: bold;
+        margin-bottom: 5px;
     }
 
     #inputForm button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      background-color: #4caf50; /* Green color */
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        background-color: #4caf50;
+        /* Green color */
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
     }
 
-    #outputArea {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
-      width: 100%;
+    .outputArea {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 80vw;
+        width: 100%;
+        overflow: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    th,
+    td {
+        border: 1px solid #f5f5f5;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    /* Zebra striping for rows */
+    tr:nth-child(even) {
+        background-color: #f5f5f5;
+    }
+
+    tr:hover {
+        background-color: #4caf50;
+        color: white;
     }
 </style>
+
 <body>
     <div id="container">
         <form id="inputForm">
-          <div class="input-group">
-            <label for="queryInput">Enter your query:</label>
-            <input type="text" id="queryInput" name="queryInput">
-          </div>
-          <button type="submit">Submit</button>
+            <div class="input-group">
+                <label for="queryInput">Enter your Question:</label>
+                <input type="text" id="queryInput" name="queryInput" class="inputsearch">
+            </div>
+            <button type="submit">Submit</button>
         </form>
-        <div id="outputArea">
-          <!-- Output content will be displayed here -->
+        <h3>Your Query</h3>
+        <div id="outputQuery" class="outputArea">
+            <!-- Output content will be displayed here -->
+        </div>
+        <h3>Your Output</h3>
+        <div id="outputResult" class="outputArea">
+            <!-- Output content will be displayed here -->
         </div>
     </div>
-    
+
     <script>
 
-        document.getElementById('inputForm').addEventListener('submit', function(event) {
+        document.getElementById('inputForm').addEventListener('submit', function (event) {
             event.preventDefault();
             const input = document.getElementById('queryInput').value;
-            const output = document.getElementById('outputArea');
+            const outputquery = document.getElementById('outputQuery');
+            const outputresult = document.getElementById('outputResult');
             console.log(input);
-            output.innerHTML  = "we are preparing your answer";
+            outputquery.innerHTML = "we are preparing your answer";
+            outputresult.innerHTML = "we are preparing your answer";
             fetch('/submit-query', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 // body: JSON.stringify({ query: input })
-                body: JSON.stringify({myinput: input})
+                body: JSON.stringify({ myinput: input })
             })
-            .then(response => response.text())
-            .then(data => {
-                // Handle the response from the server if needed
-                console.log(data);
-                output.innerHTML  = data;
-            })
-            .catch(error => {
-                // Handle any errors
-                output.innerHTML  = error;
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the server if needed
+                    console.log(data);
+                    outputquery.innerHTML = data.query_string;
+                    outputresult.innerHTML = ' ';
+                    const result = data.query_output;
+                    const tableDiv = document.getElementById('outputResult');
+
+                    // Create a table element
+                    const table = document.createElement('table');
+
+                    // Create table header
+                    const headers = Object.keys(result[0]);
+                    const headerRow = document.createElement('tr');
+                    headers.forEach(headerText => {
+                        const header = document.createElement('th');
+                        header.appendChild(document.createTextNode(headerText));
+                        headerRow.appendChild(header);
+                    });
+                    table.appendChild(headerRow);
+
+                    // Create table rows with data
+                    result.forEach(obj => {
+                        const row = document.createElement('tr');
+                        headers.forEach(header => {
+                            const cell = document.createElement('td');
+                            cell.appendChild(document.createTextNode(obj[header]));
+                            row.appendChild(cell);
+                        });
+                        table.appendChild(row);
+                    });
+
+                    // Append the table to the specified div
+                    tableDiv.appendChild(table);
+                });
         });
     </script>
 </body>

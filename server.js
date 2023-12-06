@@ -19,10 +19,7 @@ app.post('/submit-query', (req, res) => {
   const query = req.body.myinput;
   // Process the query data and perform operations here
   if(query.length != 0){
-    const ProcessedData = run(query);
-    ProcessedData.then((data)=> {
-      res.send(data);
-    })
+    const ProcessedData = run(res, query);
   }else{
     res.send("please enter some question to ask")
   }
